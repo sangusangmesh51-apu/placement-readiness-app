@@ -2,15 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   History, 
-  Building2, 
-  Briefcase, 
   Calendar, 
-  Award, 
   Trash2, 
   ExternalLink,
-  AlertCircle
+  AlertCircle,
+  Briefcase
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import { Card, CardContent } from '../components/ui/Card';
 import { getHistory, deleteAnalysis, clearHistory, hasCorruptedEntries } from '../lib/storage';
 import type { HistoryEntry } from '../types/analysis';
 
@@ -92,11 +90,12 @@ export function HistoryPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {entries.map((entry) => (
-            <Card
+            <div
               key={entry.id}
               className="cursor-pointer hover:shadow-md transition-shadow"
               onClick={() => navigate(`/results?id=${entry.id}`)}
             >
+            <Card>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-6">
@@ -138,6 +137,7 @@ export function HistoryPage() {
                 </div>
               </CardContent>
             </Card>
+            </div>
           ))}
         </div>
       )}

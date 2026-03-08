@@ -1,4 +1,4 @@
-import type { AnalysisResult } from '../types/analysis';
+// Test checklist storage - no external type imports needed
 
 const TEST_CHECKLIST_KEY = 'placement_readiness_test_checklist';
 

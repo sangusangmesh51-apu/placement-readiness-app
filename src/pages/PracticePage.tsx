@@ -1,4 +1,4 @@
-import { Code2, Filter } from 'lucide-react';
+import { Filter } from 'lucide-react';
 
 export function PracticePage() {
   const problems = [

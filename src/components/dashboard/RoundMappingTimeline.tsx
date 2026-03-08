@@ -1,4 +1,4 @@
-import { CheckCircle2, Circle, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
 import type { RoundMapping } from '../../types/analysis';
 

@@ -35,8 +35,9 @@ const categoryIcons: Record<keyof ExtractedSkills, typeof Code2> = {
   languages: Languages,
   web: Globe,
   data: Database,
-  cloudDevOps: Cloud,
+  cloud: Cloud,
   testing: Bug,
+  other: Award,
 };
 
 const categoryLabels: Record<keyof ExtractedSkills, string> = {
@@ -44,8 +45,9 @@ const categoryLabels: Record<keyof ExtractedSkills, string> = {
   languages: 'Languages',
   web: 'Web',
   data: 'Data',
-  cloudDevOps: 'Cloud & DevOps',
+  cloud: 'Cloud & DevOps',
   testing: 'Testing',
+  other: 'Other Skills',
 };
 
 export function ResultsPage() {
@@ -69,9 +71,8 @@ export function ResultsPage() {
     setLoading(false);
   }, [searchParams]);
 
-  // Get base score and final score
+  // Get base score
   const baseScore = analysis?.baseScore ?? analysis?.readinessScore ?? 0;
-  const finalScore = analysis?.finalScore ?? baseScore;
   
   // Calculate live score based on skill confidence (for real-time updates)
   const liveScore = useMemo(() => {
@@ -130,9 +131,11 @@ export function ResultsPage() {
   // Export functions
   const exportPlan = () => {
     if (!analysis) return;
-    const text = analysis.plan.map(day => 
-      `Day ${day.day}: ${day.title}\n${day.tasks.map(t => `  - ${t}`).join('\n')}`
-    ).join('\n\n');
+    const plan = analysis.plan || analysis.plan7Days || [];
+    const text = plan.map(day => {
+      const dayTitle = 'title' in day ? day.title : 'focus' in day ? day.focus : 'Study';
+      return `Day ${day.day}: ${dayTitle}\n${day.tasks.map(t => `  - ${t}`).join('\n')}`;
+    }).join('\n\n');
     copyToClipboard(text, 'plan');
   };
 
@@ -170,14 +173,14 @@ ${Object.entries(analysis.extractedSkills)
 
 7-DAY PREPARATION PLAN
 ----------------------
-${analysis.plan.map(day => 
-  `Day ${day.day}: ${day.title}\n${day.tasks.map(t => `  - ${t}`).join('\n')}`
+${(analysis.plan7Days || analysis.plan || []).map((day) => 
+  `Day ${day.day}: ${(day as {focus?: string, title?: string}).focus || (day as {focus?: string, title?: string}).title || 'Study'}\n${day.tasks.map(t => `  - ${t}`).join('\n')}`
 ).join('\n\n')}
 
 ROUND-WISE CHECKLIST
 --------------------
-${analysis.checklist.map(round => 
-  `Round ${round.round}: ${round.title}\n${round.items.map(i => `  - ${i}`).join('\n')}`
+${analysis.checklist.map((round, idx) => 
+  `Round ${idx + 1}: ${(round as {roundTitle: string}).roundTitle}\n${round.items.map(i => `  - ${i}`).join('\n')}`
 ).join('\n\n')}
 
 INTERVIEW QUESTIONS
@@ -380,13 +383,13 @@ ${analysis.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {analysis.plan.map((day) => (
+            {(analysis.plan || analysis.plan7Days || []).map((day) => (
               <div key={day.day} className="bg-gray-50 p-4 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="w-8 h-8 bg-primary-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
                     {day.day}
                   </span>
-                  <span className="font-medium text-gray-900">{day.title}</span>
+                  <span className="font-medium text-gray-900">{(day as {title?: string, focus?: string}).title || (day as {title?: string, focus?: string}).focus || 'Study'}</span>
                 </div>
                 <ul className="space-y-1">
                   {day.tasks.map((task, idx) => (

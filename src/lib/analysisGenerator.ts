@@ -9,13 +9,12 @@ import type {
   RoundMappingItem,
   RoundMapping,
 } from '../types/analysis';
-import { extractSkills, hasAnySkills, getDetectedCategories, getAllSkills } from './skillExtractor';
+import { extractSkills, getAllSkills, getDetectedCategories } from './skillExtractor';
 import { generateCompanyIntel } from './companyIntel';
 import { generateRoundMapping } from './roundMapping';
 
 // Generate round-wise checklist based on detected skills
 function generateChecklist(skills: ExtractedSkills): RoundChecklist[] {
-  const categories = getDetectedCategories(skills);
   const hasSkill = (cat: SkillCategory) => skills[cat].length > 0;
   
   const checklist: RoundChecklist[] = [
@@ -66,8 +65,8 @@ function generateChecklist(skills: ExtractedSkills): RoundChecklist[] {
         hasSkill('data') 
           ? `Prepare database questions: ${skills.data.slice(0, 2).join(', ')}`
           : 'Understand SQL basics and queries',
-        hasSkill('cloudDevOps')
-          ? `Review DevOps: ${skills.cloudDevOps.slice(0, 2).join(', ')}`
+        hasSkill('cloud')
+          ? `Review DevOps: ${skills.cloud.slice(0, 2).join(', ')}`
           : 'Learn basic deployment concepts',
         'Prepare 2 project deep-dives with architecture diagrams',
         'Practice explaining your approach to problem-solving',
@@ -271,7 +270,7 @@ function generateQuestions(skills: ExtractedSkills): string[] {
   }
 
   // Cloud/DevOps questions
-  if (hasSkill('cloudDevOps', 'AWS')) {
+  if (hasSkill('cloud', 'AWS')) {
     questions.push(
       'Explain the difference between EC2 and Lambda.',
       'What is an S3 bucket and what are its use cases?',
@@ -279,7 +278,7 @@ function generateQuestions(skills: ExtractedSkills): string[] {
     );
   }
 
-  if (hasSkill('cloudDevOps', 'Docker')) {
+  if (hasSkill('cloud', 'Docker')) {
     questions.push(
       'What is the difference between a Docker image and container?',
       'Explain Docker volumes and when to use them.',
